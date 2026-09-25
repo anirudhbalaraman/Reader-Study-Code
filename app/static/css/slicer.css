@@ -233,3 +233,7 @@ a.btn { color: var(--text); text-decoration: none; display: inline-block; }
 .cell { display: inline-block; width: 14px; height: 14px; border-radius: 2px; background: #2a2a2a; border: 1px solid #444; }
 .cell.in_progress { background: var(--warn); }
 .cell.completed { background: var(--ok); }
+
+/* COMFORT project logo (top-left corner) */
+.brand-logo { height: 44px; width: auto; display: block; margin: -3px 6px -3px -10px; }
+.corner-logo { position: fixed; top: 0; left: 0; height: 88px; width: auto; z-index: 5; }
