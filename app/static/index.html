@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reader Study - Sign in</title>
+<link rel="stylesheet" href="/static/css/slicer.css">
+</head>
+<body>
+<div class="login-wrap">
+  <div class="login-card">
+    <header>
+      <h1 id="title">Reader Study</h1>
+      <div class="muted small">PI-RADS assessment of biparametric prostate MRI</div>
+    </header>
+    <div class="tabs">
+      <button id="tab-login" class="on" type="button">Sign in</button>
+      <button id="tab-signup" type="button">Create account</button>
+    </div>
+    <form id="f-login" autocomplete="on">
+      <label>Username<input name="username" autocomplete="username" required autofocus></label>
+      <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
+      <div class="err" id="err-login"></div>
+      <button class="btn primary" type="submit">Sign in</button>
+      <div class="muted small">Your progress is saved automatically. Sign in again any time to continue where you stopped.</div>
+    </form>
+    <form id="f-signup" autocomplete="on" hidden>
+      <label>Full name<input name="full_name" autocomplete="name" required></label>
+      <label>Username<input name="username" autocomplete="username" required pattern="[A-Za-z0-9._\-]{3,32}"
+        title="3-32 characters: letters, digits, dot, dash or underscore"></label>
+      <label>Password (min. 6 characters)<input name="password" type="password" autocomplete="new-password" minlength="6" required></label>
+      <label id="code-field">Study access code<input name="signup_code" autocomplete="off"></label>
+      <div class="err" id="err-signup"></div>
+      <button class="btn primary" type="submit">Create account and start</button>
+    </form>
+  </div>
+</div>
+<script type="module">
+import { api } from "/static/js/api.js";
+const $ = (s) => document.querySelector(s);
+const next = new URLSearchParams(location.search).get("next");
+
+function show(which) {
+  $("#f-login").hidden = which !== "login";
+  $("#f-signup").hidden = which !== "signup";
+  $("#tab-login").classList.toggle("on", which === "login");
+  $("#tab-signup").classList.toggle("on", which === "signup");
+}
+$("#tab-login").onclick = () => show("login");
+$("#tab-signup").onclick = () => show("signup");
+
+const go = (isAdmin) => { location.href = next && next.startsWith("/") ? next : "/reader"; };
+
+api("/api/study").then((s) => {
+  document.title = s.title;
+  $("#title").textContent = s.title;
+  if (!s.signup_code_required) $("#code-field").remove();
+});
+api("/api/session").then((s) => { if (s.logged_in) go(); }).catch(() => {});
+
+$("#f-login").onsubmit = async (e) => {
+  e.preventDefault();
+  const f = Object.fromEntries(new FormData(e.target));
+  try { const r = await api("/api/login", { method: "POST", body: f }); go(r.is_admin); }
+  catch (err) { $("#err-login").textContent = err.message; }
+};
+$("#f-signup").onsubmit = async (e) => {
+  e.preventDefault();
+  const f = Object.fromEntries(new FormData(e.target));
+  try { await api("/api/signup", { method: "POST", body: f }); go(false); }
+  catch (err) { $("#err-signup").textContent = err.message; }
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+# PI-RADS Reader Study - configuration
+# Copy this file to config.yaml and edit it. Paths can be absolute or relative
+# to the project folder.
+
+study:
+  id: "pirads-bpmri-2026"          # used to tag every result row (local + cloud)
+  title: "PI-RADS bpMRI Reader Study"
+
+  # Readers need this code to create an account. Leave empty ("") to allow
+  # anyone who can reach the server to sign up.
+  signup_code: "prostate2026"
+
+  randomize_order: true             # every reader gets their own random case order
+  two_stage_read: true              # stage 1 = images only, stage 2 = PSA/volume revealed
+  record_reading_time: true
+  idle_timeout_seconds: 120         # timer pauses after this much inactivity
+  allow_edit_after_submit: false    # readers cannot change a finished case (admin can reopen)
+  lesion_scores: [2, 3, 4, 5]       # PI-RADS categories selectable per lesion
+  max_lesions: 4
+
+data:
+  # One sub-folder per case:  cases_dir/<case_id>/t2w.nii.gz, dwi.nii.gz, adc.nii.gz
+  # Folder names are used as case IDs, so they must be pseudonyms (no patient names/MRNs).
+  cases_dir: "data/cases"
+
+  # File name patterns (glob) inside each case folder. The first match is used.
+  sequences:
+    t2w: ["t2w.nii.gz", "t2w.nii", "*t2*.nii*"]
+    dwi: ["dwi.nii.gz", "dwi.nii", "*hbv*.nii*", "*dwi*.nii*"]
+    adc: ["adc.nii.gz", "adc.nii", "*adc*.nii*"]
+
+  # CSV with columns: case_id, psa, prostate_volume  (PSA in ng/ml, volume in ml)
+  clinical_csv: "data/clinical.csv"
+
+database:
+  path: "data/reader_study.sqlite3"   # local copy of everything - back this file up
+
+server:
+  host: "0.0.0.0"     # 0.0.0.0 = reachable from other PCs in the clinic network
+  port: 8000
+
+cloud_sync:
+  enabled: false
+  # Supabase project (choose an EU region). Create the table with supabase/schema.sql.
+  supabase_url: "https://YOUR-PROJECT.supabase.co"
+  # service_role key (Project settings > API). Keep it secret; it only lives on the clinic PC.
+  # You can also set it with the environment variable SUPABASE_SERVICE_KEY instead.
+  supabase_key: ""
+  table: "pirads_reads"
+  interval_seconds: 30
+  include_drafts: true   # also sync in-progress cases, so you can follow progress remotely

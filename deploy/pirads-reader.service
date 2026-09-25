@@ -1,0 +1,20 @@
+# systemd unit for the clinic Linux PC: starts the server at boot and restarts it on failure.
+#   sudo cp deploy/pirads-reader.service /etc/systemd/system/
+#   (edit User= and the paths below)
+#   sudo systemctl daemon-reload && sudo systemctl enable --now pirads-reader
+#   journalctl -u pirads-reader -f        # logs
+[Unit]
+Description=PI-RADS reader study server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=studyuser
+WorkingDirectory=/opt/pirads-reader-study
+ExecStart=/opt/pirads-reader-study/.venv/bin/python run.py
+# Environment=SUPABASE_SERVICE_KEY=...    # optional: keep the key out of config.yaml
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reader Study - Admin</title>
+<link rel="stylesheet" href="/static/css/slicer.css">
+<style>body { overflow: auto; }</style>
+</head>
+<body>
+<div class="menubar">
+  <span class="title" id="title">Admin</span>
+  <a href="/reader">Reader view</a>
+  <span class="spacer"></span>
+  <button class="link" id="refresh">Refresh</button>
+  <button class="link" id="logout">Log out</button>
+</div>
+<div class="admin">
+  <div class="cards" id="cards"></div>
+
+  <h2>Export results</h2>
+  <div class="row">
+    <a class="btn" href="/api/admin/export/cases.csv">Case-level CSV</a>
+    <a class="btn" href="/api/admin/export/lesions.csv">Lesion-level CSV</a>
+    <a class="btn" href="/api/admin/export/all.json">Everything (JSON)</a>
+  </div>
+
+  <h2>Cloud sync</h2>
+  <div class="panel-box" id="sync"></div>
+
+  <h2>Readers</h2>
+  <div class="panel-box"><table class="list" id="readers"></table></div>
+
+  <h2>Progress per case <span class="muted small">(green = completed, orange = in progress; click a cell to reopen or reset)</span></h2>
+  <div class="panel-box"><table class="list matrix" id="matrix"></table></div>
+
+  <h2>Cases found on disk</h2>
+  <div class="panel-box"><table class="list" id="cases"></table></div>
+</div>
+<script type="module" src="/static/js/admin.js"></script>
+</body>
+</html>

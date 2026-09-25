@@ -1,0 +1,5 @@
+fastapi>=0.110
+uvicorn>=0.27
+nibabel>=5.0
+numpy>=1.24
+PyYAML>=6.0
