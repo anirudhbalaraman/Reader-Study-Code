@@ -143,7 +143,12 @@ def _load(case_id: str, seq: str) -> dict:
     frames = []
     for t in range(arr.shape[3]):
         vol = arr[..., t]
-        nz = vol[vol != 0]
+        vmin = vol.min()
+        # ignore background fill (0, or a negative value such as -1 / -256 in some ADC maps)
+        mask = vol != 0
+        if vmin < 0 and (vol == vmin).mean() > 0.2:
+            mask &= vol != vmin
+        nz = vol[mask]
         sample = nz if nz.size > 100 else vol.ravel()
         if sample.size > 2_000_000:
             sample = sample[:: sample.size // 2_000_000 + 1]

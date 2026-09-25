@@ -5,3 +5,6 @@ config.yaml
 data/
 !data/.gitkeep
 .DS_Store
+*.zip
+*.nii
+*.nii.gz
