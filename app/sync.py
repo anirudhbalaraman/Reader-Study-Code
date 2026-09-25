@@ -29,12 +29,10 @@ def enabled() -> bool:
 
 def _request(method: str, path: str, body=None, extra_headers=None):
     url = CS["supabase_url"].rstrip("/") + "/rest/v1/" + path
-    headers = {
-        "apikey": CS["supabase_key"],
-        "Authorization": f"Bearer {CS['supabase_key']}",
-        "Content-Type": "application/json",
-        "Prefer": "return=minimal",
-    }
+    key = CS["supabase_key"]
+    headers = {"apikey": key, "Content-Type": "application/json", "Prefer": "return=minimal"}
+    if key.startswith("eyJ"):   # legacy service_role JWT; new sb_secret_ keys go in apikey only
+        headers["Authorization"] = f"Bearer {key}"
     headers.update(extra_headers or {})
     data = json.dumps(body).encode() if body is not None else None
     req = urllib.request.Request(url, data=data, method=method, headers=headers)

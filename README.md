@@ -78,7 +78,7 @@ Linux-specific things to watch:
 
 1. Create a free project at https://supabase.com and choose an **EU (Frankfurt)** region.
 2. Open **SQL Editor**, paste `supabase/schema.sql` and click **Run**. This creates the table `pirads_reads` and the lesion view `pirads_lesions`, with row-level security turned on.
-3. Copy the **service_role** key from Project Settings → API. Put it in `config.yaml` (`cloud_sync.supabase_key`) or in the environment variable `SUPABASE_SERVICE_KEY`. Set `enabled: true` and `supabase_url`.
+3. Copy the **secret** key (`sb_secret_…`, or the legacy `service_role` key) from Project Settings → API Keys. Put it in `config.yaml` (`cloud_sync.supabase_key`) or in the environment variable `SUPABASE_SERVICE_KEY`. Set `enabled: true` and `supabase_url`.
 4. Restart the app. The admin page shows the sync status. Changed rows are pushed every 30 s. If the internet is down, the app keeps working and syncs later.
 
 To view the results from anywhere, open the Supabase Table Editor, or run `python tools/fetch_cloud_results.py` to download CSVs.
